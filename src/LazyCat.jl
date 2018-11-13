@@ -20,7 +20,6 @@ struct LazyCatArray{T, N, D, RANGES, ARR} <: AbstractArray{T, N}
         end
         
         members = [members...]
-        sort!(members, by = t -> t[2][1])
         ranges = UnitRange[]
         
         for i ∈ 1:length(members)
