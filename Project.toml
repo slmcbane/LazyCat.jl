@@ -1,0 +1,7 @@
+name = "LazyCat"
+uuid = "d47fdafe-e75a-11e8-34f3-f5586cdf7e5b"
+authors = ["Sean McBane <sean.mcbane@protonmail.com>"]
+version = "0.1.0"
+
+[deps]
+RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
