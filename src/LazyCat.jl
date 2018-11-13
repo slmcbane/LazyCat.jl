@@ -8,7 +8,11 @@ import Base: getindex, setindex!, size
 export lazy_cat
 
 function lazy_cat(arrs::AbstractArray{T, N}...; dim::Int=1) where {T, N}
-    LazyCatArray{dim}(arrs...)
+    if length(arrs) == 1
+        arrs[1]
+    else
+        LazyCatArray{dim}(arrs...)
+    end
 end
 
 struct LazyCatArray{T, N, D, RANGES, ARR} <: AbstractArray{T, N}
