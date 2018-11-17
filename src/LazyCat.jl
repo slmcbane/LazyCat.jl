@@ -7,20 +7,31 @@ import Base: getindex, setindex!, size
 
 export lazy_cat
 
-function lazy_cat(arrs::AbstractArray{T, N}...; dim::Int=1) where {T, N}
+function lazy_cat(arrs::AbstractArray{T}...; dim::Int=1) where T
     if length(arrs) == 1
         arrs[1]
     else
-        LazyCatArray{dim}(arrs...)
+        # Pad arrays with smaller size out to the size of the largest dimension.
+        N = maximum(ndims.(arrs))
+        LazyCatArray{dim}(
+                          (arr -> ndims(arr) < N ?
+                           view(arr, (Colon() for i = 1:ndims(arr))...,
+                                (1:1 for i = ndims(arr)+1:N)...) :
+                           arr).(arrs)...
+                         )
     end
+end
+
+struct NotImplementedError <: Exception
+    msg::String
 end
 
 struct LazyCatArray{T, N, D, RANGES, ARR} <: AbstractArray{T, N}
     members::ARR
 
-    function LazyCatArray{D}(members::AbstractArray{T,N}...) where {D, T, N}
+    function LazyCatArray{D}(members::AbstractArray{T, N}...) where {D, T, N}
         if !(D <= N && D > 0)
-            throw(ErrorException("LazyCatArray{D}: Expect D to be a valid dimension for member arrays"))
+            throw(NotImplementedError("LazyCatArray{D}: Not implemented for D > dim of member arrays"))
         end
         
         members = [members...]
